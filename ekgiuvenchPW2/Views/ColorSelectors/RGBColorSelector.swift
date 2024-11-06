@@ -2,7 +2,7 @@ import UIKit
 
 final class RGBColorSelector: UIView {
     // MARK: - Constants
-    enum Constants {
+    private enum Constants {
         static let stackCornerRadius: CGFloat = 20
         static let stackBorderWidth: CGFloat = 2
         static let stackbackgroundColor: UIColor = .white.withAlphaComponent(0.5)
@@ -26,11 +26,11 @@ final class RGBColorSelector: UIView {
     var green: Float = Constants.defaultColorValue
     var blue: Float = Constants.defaultColorValue
     
-    let redSlider: CustomSlider = CustomSlider(title: Constants.red, textColor: Constants.redColor)
-    let greenSlider: CustomSlider = CustomSlider(title: Constants.green, textColor: Constants.greenColor)
-    let blueSlider: CustomSlider = CustomSlider(title: Constants.blue,textColor: Constants.blueColor)
+    private let redSlider: CustomSlider = CustomSlider(title: Constants.red, textColor: Constants.redColor)
+    private let greenSlider: CustomSlider = CustomSlider(title: Constants.green, textColor: Constants.greenColor)
+    private let blueSlider: CustomSlider = CustomSlider(title: Constants.blue,textColor: Constants.blueColor)
     
-    let stackView: UIStackView = {
+    private let stackView: UIStackView = {
         let stack = UIStackView()
         
         stack.layer.cornerRadius = Constants.stackCornerRadius

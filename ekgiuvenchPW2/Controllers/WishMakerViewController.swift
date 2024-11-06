@@ -1,9 +1,9 @@
 import UIKit
 
-class WishMakerViewController: UIViewController {
+final class WishMakerViewController: UIViewController {
     // MARK: - Constants
-    enum Constants {
-        static let stackBottomConstraint: CGFloat = 70
+    private enum Constants {
+        static let stackBottomConstraint: CGFloat = 80
         static let stackLeadingConstraint: CGFloat = 20
         
         static let labelWidth: CGFloat = 85
@@ -36,11 +36,12 @@ class WishMakerViewController: UIViewController {
     }
     
     // MARK: - Fields
-    let titleView = UILabel()
-    let descriptionView = UILabel()
-    let toggleButton = UIButton()
-    var rgbColorSelector = RGBColorSelector()
-    var buttonTitleValue = Constants.hidePromt
+    private let titleView = UILabel()
+    private let descriptionView = UILabel()
+    private let toggleButton = UIButton(type: .system)
+    private let addWishButton = UIButton(type: .system)
+    private let rgbColorSelector = RGBColorSelector()
+    private var buttonTitleValue = Constants.hidePromt
     
     // MARK: - Methods
     override func viewDidLoad() {
@@ -50,21 +51,29 @@ class WishMakerViewController: UIViewController {
     
     // MARK: - Private methods
     private func configureUI() {
+        configureText()
+        configureRGBColorSelector()
+        configureButtons()
+    }
+    
+    // MARK: - Configure Text
+    private func configureText() {
+        for text in [titleView, descriptionView] {
+            text.textColor = .white
+            text.shadowColor = .black
+            text.shadowOffset = CGSize(width: Constants.shadowScale, height: Constants.shadowScale)
+            text.textAlignment = .center
+            
+            view.addSubview(text)
+        }
+        
         configureTitle()
         configureDescription()
-        configureRGBColorSelector()
-        configureToggleButton()
     }
     
     private func configureTitle() {
         titleView.text = "WishMaker"
         titleView.font = UIFont.systemFont(ofSize: Constants.titleFontSize, weight: .bold)
-        titleView.textColor = .white
-        titleView.shadowColor = .black
-        titleView.shadowOffset = .init(width: Constants.shadowScale, height: Constants.shadowScale)
-        titleView.textAlignment = .center
-        
-        view.addSubview(titleView)
         
         titleView.pinTop(to: view.safeAreaLayoutGuide.topAnchor, Constants.titleTopConstraint)
         titleView.pinLeft(to: view.safeAreaLayoutGuide.leadingAnchor, Constants.titleLeadingConstraint)
@@ -74,18 +83,13 @@ class WishMakerViewController: UIViewController {
     private func configureDescription() {
         descriptionView.text = "Make your dreams come true"
         descriptionView.font = UIFont.systemFont(ofSize: Constants.descriptionFontSize, weight: .bold)
-        descriptionView.textColor = .white
-        descriptionView.shadowColor = .black
-        descriptionView.shadowOffset = .init(width: Constants.shadowScale, height: Constants.shadowScale)
-        descriptionView.textAlignment = .center
-        
-        view.addSubview(descriptionView)
-        
+                
         descriptionView.pinTop(to: titleView.bottomAnchor, Constants.titleTopConstraint)
         descriptionView.pinLeft(to: view.safeAreaLayoutGuide.leadingAnchor, Constants.titleLeadingConstraint)
         descriptionView.pinCenterX(to: titleView.centerXAnchor)
     }
     
+    // MARK: - Configure Selectors
     private func configureRGBColorSelector() {
         view.addSubview(rgbColorSelector)
         
@@ -99,40 +103,81 @@ class WishMakerViewController: UIViewController {
         view.backgroundColor = rgbColorSelector.color
     }
     
+    // MARK: - Configure Buttons
+    private func configureButtons() {
+        for button in [toggleButton, addWishButton] {
+            button.backgroundColor = .white.withAlphaComponent(Constants.defaultAlpha)
+            button.layer.borderColor = Constants.borderColor
+            button.layer.borderWidth = Constants.buttonBorderWidth
+            button.layer.cornerRadius = Constants.buttonCornerRadius
+            
+            button.setTitleColor(.white, for: .normal)
+            button.titleLabel?.layer.shadowColor = UIColor.black.cgColor
+            button.titleLabel?.layer.shadowRadius = Constants.shadowRadius
+            button.titleLabel?.layer.shadowOpacity = Float(Constants.shadowScale)
+            button.titleLabel?.layer.shadowOffset = CGSize(width: Constants.shadowScale, height: Constants.shadowScale)
+            
+            button.addTarget(self, action: #selector(buttonTouchDown(_ :)), for: .touchDown)
+            button.addTarget(self, action: #selector(buttonTouchUp(_ :)), for: [.touchUpInside, .touchUpOutside])
+            
+            view.addSubview(button)
+        }
+        
+        configureToggleButton()
+        configureAddWishButton()
+    }
+    
     private func configureToggleButton() {
         toggleButton.setTitle(buttonTitleValue, for: .normal)
         
-        toggleButton.backgroundColor = .white.withAlphaComponent(Constants.defaultAlpha)
-        toggleButton.layer.borderColor = Constants.borderColor
-        toggleButton.layer.borderWidth = Constants.buttonBorderWidth
-        toggleButton.layer.cornerRadius = Constants.buttonCornerRadius
-        
-        toggleButton.setTitleColor(.white, for: .normal)
-        toggleButton.titleLabel?.layer.shadowColor = UIColor.black.cgColor
-        toggleButton.titleLabel?.layer.shadowRadius = Constants.shadowRadius
-        toggleButton.titleLabel?.layer.shadowOpacity = Float(Constants.shadowScale)
-        toggleButton.titleLabel?.layer.shadowOffset = CGSize(width: Constants.shadowScale, height: Constants.shadowScale)
-        
-        view.addSubview(toggleButton)
-        
-        toggleButton.pinBottom(to: view.safeAreaLayoutGuide.bottomAnchor, Constants.toggleButtonBottomConstraint)
+        toggleButton.pinBottom(to: rgbColorSelector.topAnchor, Constants.toggleButtonBottomConstraint)
         toggleButton.pinCenterX(to: view.safeAreaLayoutGuide.centerXAnchor)
         toggleButton.setHeight(Constants.toggleButtonHeight)
         toggleButton.setWidth(Constants.toggleButtonWidth)
         
         toggleButton.addTarget(self, action: #selector(toggleRGBColorSelector), for: .touchUpInside)
-        toggleButton.addTarget(self, action: #selector(buttonTouchDown), for: .touchDown)
-        toggleButton.addTarget(self, action: #selector(buttonTouchUp), for: [.touchUpInside, .touchUpOutside])
+        toggleButton.addTarget(self, action: #selector(toggleButtonTitle), for: .touchDown)
+    }
+    
+    private func configureAddWishButton() {
+        addWishButton.setTitle("Wishes", for: .normal)
+        
+        addWishButton.pinTop(to: rgbColorSelector.bottomAnchor, Constants.toggleButtonBottomConstraint)
+        addWishButton.pinCenterX(to: view.safeAreaLayoutGuide.centerXAnchor)
+        addWishButton.setHeight(Constants.toggleButtonHeight)
+        addWishButton.pinLeft(to: view.safeAreaLayoutGuide.leadingAnchor, Constants.stackLeadingConstraint)
+        
+        addWishButton.addTarget(self, action: #selector(addWishButtonPressed), for: .touchDown)
     }
     
     // MARK: - Actions
+    // MARK: Actions for all buttons
     @objc
-    private func buttonTouchDown() {
+    private func buttonTouchDown(_ sender: UIButton) {
         UIView.animate(withDuration: Constants.animationDuration) {
-            self.toggleButton.transform = CGAffineTransform(scaleX: Constants.x, y: Constants.y)
-            self.toggleButton.alpha = Constants.defaultAlpha
+            sender.transform = CGAffineTransform(scaleX: Constants.x, y: Constants.y)
+            sender.alpha = Constants.defaultAlpha
         }
-
+    }
+    
+    @objc
+    private func buttonTouchUp(_ sender: UIButton) {
+        UIView.animate(withDuration: Constants.animationDuration) {
+            sender.transform = .identity
+            sender.alpha = 1
+        }
+    }
+    
+    // MARK: Actions for toggleButton
+    @objc
+    private func toggleRGBColorSelector() {
+        UIView.animate(withDuration: Constants.animationDuration) {
+            self.rgbColorSelector.isHidden.toggle()
+        }
+    }
+    
+    @objc
+    private func toggleButtonTitle() {
         if buttonTitleValue.hasPrefix("S") {
             buttonTitleValue = Constants.hidePromt
         }
@@ -143,18 +188,12 @@ class WishMakerViewController: UIViewController {
         toggleButton.setTitle(self.buttonTitleValue, for: .normal)
     }
     
-    @objc
-    private func buttonTouchUp() {
-        UIView.animate(withDuration: Constants.animationDuration) {
-            self.toggleButton.transform = .identity
-            self.toggleButton.alpha = 1
-        }
-    }
     
+    // MARK: - Actions for addWishButton
     @objc
-    private func toggleRGBColorSelector() {
-        UIView.animate(withDuration: Constants.animationDuration) {
-            self.rgbColorSelector.isHidden.toggle()
-        }
+    private func addWishButtonPressed() {
+        present(WishStoringViewController(), animated: true)
+        self.addWishButton.transform = .identity
+        self.addWishButton.alpha = 1
     }
 }

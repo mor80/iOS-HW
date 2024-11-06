@@ -2,7 +2,7 @@ import UIKit
 
 final class CustomSlider: UIView {
     // MARK: - Constants
-    enum Constants {
+    private enum Constants {
         static let leadingConstraint: CGFloat = 20
         static let trailingConstraint: CGFloat = 20
         static let topConstraint: CGFloat = 20
@@ -14,10 +14,11 @@ final class CustomSlider: UIView {
     // MARK: - Fields
     var valueChanged: ((Float) -> Void)?
     
-    var slider = UISlider()
-    var titleView = UILabel()
-    var valueView = UILabel()
+    private var slider: UISlider = UISlider()
+    private var titleView: UILabel = UILabel()
+    private var valueView: UILabel = UILabel()
     
+    // MARK: - Lifecycle methods
     init(title: String, textColor: UIColor = .gray, min: Float = 0.0, max: Float = 255.0) {
         super.init(frame: .zero)
         titleView.text = title
