@@ -23,15 +23,16 @@ final class CustomSlider: UIView {
         super.init(frame: .zero)
         titleView.text = title
         titleView.textColor = textColor
-        titleView.shadowColor = .black
-        titleView.shadowOffset = .init(width: Constants.shadowScale, height: Constants.shadowScale)
+//        titleView.shadowColor = .black
+//        titleView.shadowOffset = .init(width: Constants.shadowScale, height: Constants.shadowScale)
         
         valueView.textColor = textColor
         valueView.textAlignment = .right
-        valueView.shadowColor = .black
-        valueView.shadowOffset = .init(width: Constants.shadowScale, height: Constants.shadowScale)
+//        valueView.shadowColor = .black
+//        valueView.shadowOffset = .init(width: Constants.shadowScale, height: Constants.shadowScale)
         
         slider.tintColor = Constants.tintColor
+        slider.value = 0
         slider.minimumValue = min
         slider.maximumValue = max
         slider.addTarget(self, action: #selector(sliderValueChanged), for: .valueChanged)
@@ -41,6 +42,12 @@ final class CustomSlider: UIView {
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: - Methods
+    func updateTextColor(with color: UIColor) {
+        titleView.textColor = color
+        valueView.textColor = color
     }
     
     // MARK: - Private methods

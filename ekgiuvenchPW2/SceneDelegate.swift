@@ -7,7 +7,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         let uiwindow = UIWindow(windowScene: windowScene)
         window = uiwindow
-        uiwindow.rootViewController = WishMakerViewController()
+        uiwindow.rootViewController = UINavigationController(rootViewController: WishMakerViewController())
         uiwindow.makeKeyAndVisible()
     }
 

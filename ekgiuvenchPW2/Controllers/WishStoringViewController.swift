@@ -36,6 +36,15 @@ final class WishStoringViewController: UIViewController {
     private var currentWishText: String = ""
     private let defaults = UserDefaults.standard
     
+    // MARK: - Properties
+    var initialColor: UIColor? {
+        didSet {
+            view.backgroundColor = initialColor
+            saveWishButton.setTitleColor(initialColor, for: .normal)
+            table.backgroundColor = initialColor
+        }
+    }
+    
     // MARK: - Methods
     override func viewDidLoad() {
         view.backgroundColor = .lightGray
@@ -52,7 +61,7 @@ final class WishStoringViewController: UIViewController {
     
     private func configureTable() {
         view.addSubview(table)
-        table.backgroundColor = .lightGray
+        table.backgroundColor = initialColor
         table.dataSource = self
         table.layer.cornerRadius = Constants.tableCornerRadius
         table.separatorStyle = .none
@@ -78,17 +87,17 @@ final class WishStoringViewController: UIViewController {
     
     private func configureSaveWishButton() {
         saveWishButton.setTitle("Save", for: .normal)
-        saveWishButton.backgroundColor = .white.withAlphaComponent(Constants.defaultAlpha)
+        saveWishButton.backgroundColor = .systemGray4
         saveWishButton.layer.borderColor = Constants.borderColor
         saveWishButton.layer.borderWidth = Constants.buttonBorderWidth
         saveWishButton.layer.cornerRadius = Constants.buttonCornerRadius
         
-        saveWishButton.setTitleColor(.white, for: .normal)
-        saveWishButton.titleLabel?.layer.shadowColor = UIColor.black.cgColor
-        saveWishButton.titleLabel?.layer.shadowRadius = Constants.shadowRadius
-        saveWishButton.titleLabel?.layer.shadowOpacity = Float(Constants.shadowScale)
-        saveWishButton.titleLabel?.layer.shadowOffset = CGSize(width: Constants.shadowScale, height: Constants.shadowScale)
-        
+        saveWishButton.setTitleColor(initialColor, for: .normal)
+//        saveWishButton.titleLabel?.layer.shadowColor = UIColor.black.cgColor
+//        saveWishButton.titleLabel?.layer.shadowRadius = Constants.shadowRadius
+//        saveWishButton.titleLabel?.layer.shadowOpacity = Float(Constants.shadowScale)
+//        saveWishButton.titleLabel?.layer.shadowOffset = CGSize(width: Constants.shadowScale, height: Constants.shadowScale)
+//        
         saveWishButton.addTarget(self, action: #selector(buttonTouchDown(_ :)), for: .touchDown)
         saveWishButton.addTarget(self, action: #selector(buttonTouchUp(_ :)), for: [.touchUpInside, .touchUpOutside])
         
@@ -155,9 +164,12 @@ final class WishStoringViewController: UIViewController {
 // MARK: - UITableViewDataSource
 extension WishStoringViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if section == 1 && wishArray.isEmpty {
+            return 1 // Показываем сообщение "No wishes yet!"
+        }
         return section == 0 ? 1 : wishArray.count
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch indexPath.section {
         case 0:
@@ -169,17 +181,40 @@ extension WishStoringViewController: UITableViewDataSource {
             }
             return cell
         case 1:
-            let cell = tableView.dequeueReusableCell(withIdentifier: WrittenWishCell.reuseId, for: indexPath)
-            if let wishCell = cell as? WrittenWishCell {
-                wishCell.configure(with: wishArray[indexPath.row])
+            if wishArray.isEmpty {
+                let cell = UITableViewCell()
+                cell.textLabel?.text = "No wishes yet!"
+                cell.textLabel?.textAlignment = .center
+                cell.selectionStyle = .none
+                cell.backgroundColor = .clear
+                return cell
+            } else {
+                let cell = tableView.dequeueReusableCell(withIdentifier: WrittenWishCell.reuseId, for: indexPath)
+                if let wishCell = cell as? WrittenWishCell {
+                    wishCell.configure(with: wishArray[indexPath.row])
+                }
+                return cell
             }
-            return cell
         default:
             return UITableViewCell()
         }
     }
+
     
     func numberOfSections(in tableView: UITableView) -> Int {
         return Constants.numberOfSections
+    }
+}
+
+// MARK: - UITableViewDelegate
+extension WishStoringViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard indexPath.section == 1 else { return }
+        
+        let creationVC = WishEventCreationView()
+        creationVC.initialColor = initialColor
+        print(wishArray)
+        creationVC.wishes = wishArray
+        present(creationVC, animated: true)
     }
 }

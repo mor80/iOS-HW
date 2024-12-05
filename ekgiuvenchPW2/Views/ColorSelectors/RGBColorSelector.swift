@@ -5,16 +5,16 @@ final class RGBColorSelector: UIView {
     private enum Constants {
         static let stackCornerRadius: CGFloat = 20
         static let stackBorderWidth: CGFloat = 2
-        static let stackbackgroundColor: UIColor = .white.withAlphaComponent(0.5)
+        static let stackbackgroundColor: UIColor = .systemGray4
         static let stackBorderColor: CGColor = .init(red: 63/255, green: 66/255, blue: 80/255, alpha: 1)
         
         static let red: String = "Red"
         static let green: String = "Green"
         static let blue: String = "Blue"
         
-        static let redColor: UIColor = .white
-        static let greenColor: UIColor = .white
-        static let blueColor: UIColor = .white
+        static let redColor: UIColor = .systemGray4
+        static let greenColor: UIColor = .systemGray4
+        static let blueColor: UIColor = .systemGray4
         
         static let defaultColorValue: Float = 0.0
     }
@@ -61,6 +61,13 @@ final class RGBColorSelector: UIView {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: - Methods
+    func updateTextColor(with color: UIColor) {
+        redSlider.updateTextColor(with: color)
+        greenSlider.updateTextColor(with: color)
+        blueSlider.updateTextColor(with: color)
     }
     
     // MARK: - Private methods

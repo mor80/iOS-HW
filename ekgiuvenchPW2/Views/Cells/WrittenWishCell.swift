@@ -5,7 +5,7 @@ final class WrittenWishCell: UITableViewCell {
     
     // MARK: - Constants
     private enum Constants {
-        static let wrapColor1: UIColor = .systemMint
+        static let wrapColor1: UIColor = .systemGray4
         static let wrapColor2: UIColor = .blue
         static let wrapColor3: UIColor = .red
 
