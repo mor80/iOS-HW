@@ -59,6 +59,10 @@ final class WishEventCreationView: UIViewController {
         if !wishes.isEmpty {
             pickerView.selectRow(0, inComponent: 0, animated: false)
             titleTextField.text = wishes[0]
+            pickerView.isHidden = false
+        }
+        else {
+            pickerView.isHidden = true
         }
     }
 

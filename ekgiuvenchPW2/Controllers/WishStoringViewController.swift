@@ -121,6 +121,12 @@ final class WishStoringViewController: UIViewController {
             wishArray = savedWishes
         }
     }
+    
+    private func clearWishes() {
+        wishArray.removeAll()
+        saveWishes()
+        table.reloadData()
+    }
 
     // MARK: - Actions
     // MARK:  Actions for all buttons
